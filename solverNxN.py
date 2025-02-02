@@ -4,6 +4,8 @@ import printer
 
 # クリアチェック
 def clear_check(place):
+    size = len(place)
+    blocksize = int(size ** 0.5)
     for i in range(size):
         rowset = set(place[i])
         if len(rowset) != size or 0 in rowset:
@@ -18,6 +20,8 @@ def clear_check(place):
 
 # 途中チェック(枝切り)
 def check(place):
+    size = len(place)
+    blocksize = int(size ** 0.5)
     for i in range(size):
         rowset = set()
         colset = set()
@@ -43,7 +47,8 @@ def check(place):
     return True
 
 # ソルバー
-def solve(place):
+def solve_recur(place, solutions):
+    size = len(place)
     for i in range(size):
         for j in range(size):
             # 空いているとき全パターン試す
@@ -51,18 +56,20 @@ def solve(place):
                 for k in range(1, size + 1):
                     place[i][j] = k
                     if check(place):
-                        solve(place)
+                        solve_recur(place, solutions)
                 place[i][j] = 0
                 return False
     if clear_check(place):
-        A_place_list.append(copy.deepcopy(place))
+        solutions.append(copy.deepcopy(place))
+    return True
+
+def solve(place):
+    solutions = []
+    solve_recur(place, solutions)
+    return solutions
+
 
 if __name__ == '__main__':
-    size = 9
-    blocksize = 3
-    # 初期化
-    A_place_list = []
-
     Q_place = [
         [1, 8, 0, 9, 6, 0, 7, 4, 0],
         [0, 0, 6, 0, 8, 0, 5, 2, 1],
@@ -74,7 +81,5 @@ if __name__ == '__main__':
         [0, 2, 7, 0, 0, 5, 0, 3, 6],
         [4, 9, 0, 0, 0, 0, 0, 0, 0]
     ]
-
-    A_place_list = []
-    solve(Q_place)
+    A_place_list = solve(Q_place)
     printer.multi_printer(A_place_list)

@@ -34,7 +34,7 @@ def make_A_place():
 
         # 解を求める
         solver9x9.A_place_list = []
-        solver9x9.solve(A_place)
+        solver9x9.solve_recur(A_place)
         if len(solver9x9.A_place_list) > 0: # 解が見つかったら終了
             break
         else: # 数字を1つずつ減らしていく

@@ -15,5 +15,5 @@ Q_place = [
 ]
 
 A_place_list = []
-solver9x9.solve(Q_place)
+solver9x9.solve_recur(Q_place)
 printer.single_printer(A_place_list[0])

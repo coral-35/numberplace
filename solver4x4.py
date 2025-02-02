@@ -1,7 +1,7 @@
 # 4x4ナンプレソルバー
-
 import copy
 import printer
+
 # クリアチェック
 def clear_check(place):
     for i in range(4):
@@ -43,7 +43,7 @@ def check(place):
     return True
 
 # ソルバー
-def solve(place):
+def solve_recur(place, solutions):
     for i in range(4):
         for j in range(4):
             # 空いているとき全パターン試す
@@ -51,13 +51,19 @@ def solve(place):
                 for k in range(1, 5):
                     place[i][j] = k
                     if check(place):
-                        solve(place)
+                        solve_recur(place, solutions)
                 place[i][j] = 0
                 return False
             
     # 全部埋まったらチェック
     if clear_check(place):
-        A_place_list.append(copy.deepcopy(place))
+        solutions.append(copy.deepcopy(place))
+    return True
+
+def solve(place):
+    solutions = []
+    solve_recur(place, solutions)
+    return solutions
 
 if __name__ == '__main__':
     Q_place = [
@@ -66,7 +72,5 @@ if __name__ == '__main__':
         [0, 1, 0, 0],
         [2, 0, 0, 0]
     ]
-
-    A_place_list = []
-    solve(Q_place)
+    A_place_list = solve(Q_place)
     printer.multi_printer(A_place_list)
