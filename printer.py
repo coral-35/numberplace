@@ -1,6 +1,7 @@
 def single_printer(place):
     size = len(place)
     blocksize = int(size ** 0.5)
+    blocksize = int(size ** 0.5)
     blocknum = size // blocksize
     for block_i in range(blocknum):
         for i in range(blocksize):
@@ -11,7 +12,11 @@ def single_printer(place):
                     print("|", end=" ")
             print()
         if block_i != blocknum - 1:
-            print("- - - + - - - + - - -")
+            separator = ""
+            for i in range(size):
+                separator += "- " if (i + 1) % blocksize != 0 else "- + "
+            separator = separator.rstrip(" + ")  # 最後の "+ " を削除
+            print(separator)
 
 def multi_printer(places):
     for i, place in enumerate(places):
