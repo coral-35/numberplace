@@ -1,6 +1,6 @@
 # 9x9ナンプレソルバー
 import copy
-
+import printer
 # クリアチェック
 def clear_check(place):
     for i in range(9):
@@ -58,21 +58,19 @@ def solve(place):
     if clear_check(place):
         A_place_list.append(copy.deepcopy(place))
 
-Q_place = [
-    [1, 8, 0, 9, 6, 0, 7, 4, 0],
-    [0, 0, 6, 0, 8, 0, 5, 2, 1],
-    [0, 4, 2, 0, 5, 0, 0, 9, 8],
-    [2, 7, 0, 5, 0, 0, 0, 0, 0],
-    [0, 0, 9, 0, 7, 3, 0, 8, 0],
-    [3, 6, 0, 8, 2, 0, 0, 7, 5],
-    [6, 0, 3, 0, 0, 8, 2, 1, 4],
-    [0, 2, 7, 0, 0, 5, 0, 3, 6],
-    [4, 9, 0, 0, 0, 0, 0, 0, 0]
-]
+if __name__ == '__main__':
+    Q_place = [
+        [1, 8, 0, 9, 6, 0, 7, 4, 0],
+        [0, 0, 6, 0, 8, 0, 5, 2, 1],
+        [0, 4, 2, 0, 5, 0, 0, 9, 8],
+        [2, 7, 0, 5, 0, 0, 0, 0, 0],
+        [0, 0, 9, 0, 7, 3, 0, 8, 0],
+        [3, 6, 0, 8, 2, 0, 0, 7, 5],
+        [6, 0, 3, 0, 0, 8, 2, 1, 4],
+        [0, 2, 7, 0, 0, 5, 0, 3, 6],
+        [4, 9, 0, 0, 0, 0, 0, 0, 0]
+    ]
 
-A_place_list = []
-solve(Q_place)
-for i, A_place in enumerate(A_place_list):
-    print(f'Answer {i+1}')
-    for row in A_place:
-        print(row)
+    A_place_list = []
+    solve(Q_place)
+    printer.multi_printer(A_place_list)
