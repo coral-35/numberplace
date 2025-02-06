@@ -52,6 +52,9 @@ def fill_single_possib_place(place, possib_place):
                         place[i][j] = possible_values[0] + 1
                         update_possib_place(place, possib_place, i, j)
                         filled = True
+                    # あるマスで詰みが発覚したらその時点で終了
+                    elif len(possible_values) == 0:
+                        return False
 
 # ソルバー
 def solve(place):
@@ -61,7 +64,7 @@ def solve(place):
     if clear_check(place):
         solutions.append(copy.deepcopy(place))
     else:
-        printer.single_printer(place)
+        # printer.single_printer(place)
         return False, place
     return True, solutions
 
