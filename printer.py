@@ -17,12 +17,12 @@ def single_printer(place):
                 separator += "- " if (i + 1) % blocksize != 0 else "- + "
             separator = separator.rstrip(" + ")  # 最後の "+ " を削除
             print(separator)
+    print()
 
 def multi_printer(places):
     for i, place in enumerate(places):
         print(f'Answer {i+1}')
         single_printer(place)
-        print()
 
 if __name__ == '__main__':
     Q_place = [

@@ -52,6 +52,8 @@ def fill_single_possib_place(place, possib_place):
                         place[i][j] = possible_values[0] + 1
                         update_possib_place(place, possib_place, i, j)
                         filled = True
+                    elif len(possible_values) == 0:
+                        return False
 
 # ソルバー
 def solve(place):

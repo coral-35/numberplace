@@ -1,8 +1,8 @@
 import copy
-import heapq
+import os
 import pandas
 import random
-import numberplace.solver9x9_recur as solver9x9_recur
+import solver9x9
 import printer
 import place_ID_changer
 
@@ -19,37 +19,54 @@ Q_place = [
 ]
 
 # 初期リストを作成
-A_place_list = solver9x9_recur.solve(Q_place)
-# 親盤面をコピー
-A_place = A_place_list[0]
-idset = set()
-idset.add(place_ID_changer.place_to_id(A_place))
+solve_flg, A_place_list = solver9x9.solve(Q_place)
 
-while len(idset) < 100000:
+list_idx = 0
+# csv から ID を取得
+try:
+    idlist = pandas.read_csv("placeid_list" + str(list_idx) + ".csv")
+    idset = set(idlist)
+    print(idset)
+except:
+    idset = set()
+
+print(len(idset), "loaded")
+
+
+idset.add(place_ID_changer.place_to_id(Q_place))
+
+while len(idset) < 2:
+    # 親盤面をコピー
+    Q_place = copy.deepcopy(A_place_list[-1])
+
     # ランダムに要素を削除
-    del_count = 0
-    while del_count < 50:
+    del_count = [1 if Q_place[i][j] == 0 else 0 for j in range(9) for i in range(9)].count(1)
+    while del_count < 30:
         row = random.randint(0, 8)
         col = random.randint(0, 8)
-        if A_place[row][col] != 0:
-            A_place[row][col] = 0
+        if Q_place[row][col] != 0:
+            Q_place[row][col] = 0
             del_count += 1
 
     print("new Q")
-    printer.single_printer(A_place)
-    new_A_place_list = solver9x9_recur.solve(A_place)
-    printer.multi_printer(new_A_place_list)
+    printer.single_printer(Q_place)
+    solve_flg, new_A_place_list = solver9x9.solve(Q_place)
+    if solve_flg:
+        printer.multi_printer(new_A_place_list)
 
-    for new_A_place in new_A_place_list:
-        id = place_ID_changer.place_to_id(new_A_place)
-        idset.add(id)
+        for new_A_place in new_A_place_list:
+            id = place_ID_changer.place_to_id(new_A_place)
+            idset.add(id)
 
-    A_place = new_A_place_list[-1]
-    print(len(idset))
+        print("idset", len(idset))
+        print()
 
-    # csv に書き込み
-    placeid_list = list(idset)
-    pandas.DataFrame(placeid_list).to_csv("placeid_list.csv")
+        # csv に書き込み
+        placeid_list = list(idset)
+        csv_path = os.path.join(os.path.dirname(__file__), "placeid_list" + str(list_idx) + ".csv")
+        pandas.DataFrame(placeid_list).to_csv(csv_path)    
+else:
+        print("no solution")
 
 
 placeid_list = list(idset)
