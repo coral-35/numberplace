@@ -1,6 +1,6 @@
 import copy
 import random
-import solver9x9
+import numberplace.solver9x9_recur as solver9x9_recur
 import printer
 
 def make_random_place():
@@ -33,9 +33,9 @@ def make_A_place():
         print()
 
         # 解を求める
-        solver9x9.A_place_list = []
-        solver9x9.solve_recur(A_place)
-        if len(solver9x9.A_place_list) > 0: # 解が見つかったら終了
+        solver9x9_recur.A_place_list = []
+        solver9x9_recur.solve_recur(A_place)
+        if len(solver9x9_recur.A_place_list) > 0: # 解が見つかったら終了
             break
         else: # 数字を1つずつ減らしていく
             flg = False
@@ -47,7 +47,7 @@ def make_A_place():
                         A_place[i][j] = 0
                         flg = True
                         break
-    printer.multi_printer(solver9x9.A_place_list)
+    printer.multi_printer(solver9x9_recur.A_place_list)
 
 if __name__ == '__main__':
     make_A_place()

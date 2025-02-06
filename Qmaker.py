@@ -2,7 +2,7 @@ import copy
 import heapq
 import pandas
 import random
-import solver9x9
+import numberplace.solver9x9_recur as solver9x9_recur
 import printer
 import place_ID_changer
 
@@ -19,7 +19,7 @@ Q_place = [
 ]
 
 # 初期リストを作成
-A_place_list = solver9x9.solve(Q_place)
+A_place_list = solver9x9_recur.solve(Q_place)
 # 親盤面をコピー
 A_place = A_place_list[0]
 idset = set()
@@ -37,7 +37,7 @@ while len(idset) < 100000:
 
     print("new Q")
     printer.single_printer(A_place)
-    new_A_place_list = solver9x9.solve(A_place)
+    new_A_place_list = solver9x9_recur.solve(A_place)
     printer.multi_printer(new_A_place_list)
 
     for new_A_place in new_A_place_list:
