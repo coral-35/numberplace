@@ -6,73 +6,70 @@ import solver9x9
 import printer
 import place_ID_changer
 
-Q_place = [
-    [1, 8, 0, 9, 6, 0, 7, 4, 0],
-    [0, 0, 6, 0, 8, 0, 5, 2, 1],
-    [0, 4, 2, 0, 5, 0, 0, 9, 8],
-    [2, 7, 0, 5, 0, 0, 0, 0, 0],
-    [0, 0, 9, 0, 7, 3, 0, 8, 0],
-    [3, 6, 0, 8, 2, 0, 0, 7, 5],
-    [6, 0, 3, 0, 0, 8, 2, 1, 4],
-    [0, 2, 7, 0, 0, 5, 0, 3, 6],
-    [4, 9, 0, 0, 0, 0, 0, 0, 0]
-]
+def make_X_place():
+    Q_place = [[0 for i in range(9)] for j in range(9)]
+    for i in range(4):
+        for j in range(5):
+            r = random.randint(1, 11)
+            if r <= 2: 
+                Q_place[i][j] = "X"
+                Q_place[8-j][i] = "X"
+                Q_place[j][8-i] = "X"
+                Q_place[8-i][8-j] = "X"
+    r = random.randint(1, 11)
+    if r <= 2: # 30%
+        Q_place[4][4] = "X"
+    return Q_place
 
-# 初期リストを作成
-solve_flg, A_place_list = solver9x9.solve(Q_place)
+def make_Q_place(X_place, A_place):
+    Q_place = [[0 for i in range(9)] for j in range(9)]
+    for i in range(9):
+        for j in range(9):
+            if X_place[i][j] == "X":
+                Q_place[i][j] = A_place[i][j]
+    return Q_place
 
-list_idx = 0
-# csv から ID を取得
-try:
-    idlist = pandas.read_csv("placeid_list" + str(list_idx) + ".csv")
-    idset = set(idlist)
-    print(idset)
-except:
-    idset = set()
+try_num = 0
+Qplaceid_list = []
+Aplaceid_list = []
 
-print(len(idset), "loaded")
+# 初期問題を読み込む
+csv_path = os.path.join(os.path.dirname(__file__), "Q_A_placeid_list.csv")
+if os.path.exists(csv_path):
+    df = pandas.read_csv(csv_path)
+    Qplaceid_list = df["Q_id"].tolist()
+    Aplaceid_list = df["A_id"].tolist()
+    
+while try_num < 100000:
+    # X 盤面を作成
+    X_place = make_X_place()
+    print("X_place")
+    printer.single_printer(X_place)
+    
+    # 重複のない解答盤面を選択
+    list_idx = 0
+    A_list = pandas.read_csv("placeid_list" + str(list_idx) + ".csv")["id"].tolist()
+    r = random.randint(0, len(A_list)-1)
+    print("r:", r)
+    A_place = place_ID_changer.id_to_place(A_list[r])
 
-
-idset.add(place_ID_changer.place_to_id(Q_place))
-
-while len(idset) < 2:
-    # 親盤面をコピー
-    Q_place = copy.deepcopy(A_place_list[-1])
-
-    # ランダムに要素を削除
-    del_count = [1 if Q_place[i][j] == 0 else 0 for j in range(9) for i in range(9)].count(1)
-    while del_count < 30:
-        row = random.randint(0, 8)
-        col = random.randint(0, 8)
-        if Q_place[row][col] != 0:
-            Q_place[row][col] = 0
-            del_count += 1
-
-    print("new Q")
+    # 問題盤面を作成
+    Q_place = make_Q_place(X_place, A_place)
+    print("Q_place")
     printer.single_printer(Q_place)
-    solve_flg, new_A_place_list = solver9x9.solve(Q_place)
+
+    solve_flg, A_place_list = solver9x9.solve(copy.deepcopy(Q_place))
     if solve_flg:
-        printer.multi_printer(new_A_place_list)
+        printer.multi_printer(A_place_list)
+        if len(A_place_list) == 1:
+            print("unique")
+            Qplaceid_list.append(place_ID_changer.place_to_id(Q_place))
+            Aplaceid_list.append(place_ID_changer.place_to_id(A_place))
+            csv_path = os.path.join(os.path.dirname(__file__), "Q_A_placeid_list.csv")
+            df = pandas.DataFrame({"Q_id": Qplaceid_list, "A_id": Aplaceid_list})
+            df.to_csv(csv_path, index=False)
+    else:
+        print("no solution, A_place_X")
+        printer.single_printer(Q_place)
 
-        for new_A_place in new_A_place_list:
-            id = place_ID_changer.place_to_id(new_A_place)
-            idset.add(id)
-
-        print("idset", len(idset))
-        print()
-
-        # csv に書き込み
-        placeid_list = list(idset)
-        csv_path = os.path.join(os.path.dirname(__file__), "placeid_list" + str(list_idx) + ".csv")
-        pandas.DataFrame(placeid_list).to_csv(csv_path)    
-else:
-        print("no solution")
-
-
-placeid_list = list(idset)
-firstid = placeid_list[0]
-lastid = placeid_list[-1]
-print(firstid)
-print(lastid)
-issame = [1 if firstid[i] == lastid[i] else 0 for i in range(len(firstid))]
-print(sum(issame))
+    try_num += 1
