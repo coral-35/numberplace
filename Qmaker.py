@@ -48,7 +48,7 @@ while try_num < 100000:
     
     # 重複のない解答盤面を選択
     list_idx = 0
-    A_list = pandas.read_csv("placeid_list" + str(list_idx) + ".csv")["id"].tolist()
+    A_list = pandas.read_csv("A_placeid_list.csv")["id"].tolist()
     r = random.randint(0, len(A_list)-1)
     print("r:", r)
     A_place = place_ID_changer.id_to_place(A_list[r])
