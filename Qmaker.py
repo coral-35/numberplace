@@ -2,7 +2,7 @@ import copy
 import heapq
 import pandas
 import random
-import numberplace.solver9x9_recur as solver9x9_recur
+import solver9x9_recur as solver9x9_recur
 import printer
 import place_ID_changer
 
