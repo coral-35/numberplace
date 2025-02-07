@@ -70,4 +70,29 @@ def make_A_placeid_list(num):
     pandas.DataFrame(A_place_list, columns=["id"]).to_csv(csv_path, index=False)
 
 if __name__ == "__main__":
-    make_A_placeid_list(10)
+    A_list_idx = 0
+    list_size = 10000
+    Aplaceid_list = []
+    try:
+        while True:
+            csv_path = os.path.join(os.path.dirname(__file__), "A_placeid_list_" + str(A_list_idx) + ".csv")
+            if os.path.exists(csv_path):
+                Aplaceid_list = pandas.read_csv(csv_path)["id"].tolist()
+                if  len(Aplaceid_list) < list_size:
+                    break
+            else:
+                break
+            A_list_idx += 1
+    except:
+        pass
+    
+    while True:
+        Aplaceid_list.append(place_ID_changer.place_to_id(make_A_place()))
+        csv_path = os.path.join(os.path.dirname(__file__), "A_placeid_list_" + str(A_list_idx) + ".csv")
+        pandas.DataFrame(Aplaceid_list, columns=["id"]).to_csv(csv_path, index=False)
+        if len(Aplaceid_list) >= list_size:
+            A_list_idx += 1
+            Aplaceid_list = []
+        if A_list_idx > 100:
+            break
+        

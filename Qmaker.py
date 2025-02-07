@@ -40,7 +40,7 @@ if os.path.exists(csv_path):
     Qplaceid_list = df["Q_id"].tolist()
     Aplaceid_list = df["A_id"].tolist()
     
-while try_num < 100000:
+while try_num < 10000:
     # X 盤面を作成
     X_place = make_X_place()
     print("X_place")
