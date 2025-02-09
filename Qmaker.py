@@ -40,36 +40,40 @@ if os.path.exists(csv_path):
     Qplaceid_list = df["Q_id"].tolist()
     Aplaceid_list = df["A_id"].tolist()
     
-while try_num < 10000:
+# while try_num < 10000:
+while True:
     # X 盤面を作成
     X_place = make_X_place()
-    print("X_place")
-    printer.single_printer(X_place)
+    # print("X_place")
+    # printer.single_printer(X_place)
     
     # 重複のない解答盤面を選択
     list_idx = 0
-    A_list = pandas.read_csv("A_placeid_list.csv")["id"].tolist()
+    A_list = pandas.read_csv("A_placeid_list_0.csv")["id"].tolist()
     r = random.randint(0, len(A_list)-1)
-    print("r:", r)
+    # print("r:", r)
     A_place = place_ID_changer.id_to_place(A_list[r])
 
     # 問題盤面を作成
     Q_place = make_Q_place(X_place, A_place)
-    print("Q_place")
-    printer.single_printer(Q_place)
+    # print("Q_place")
+    # printer.single_printer(Q_place)
 
     solve_flg, A_place_list = solver9x9.solve(copy.deepcopy(Q_place))
     if solve_flg:
-        printer.multi_printer(A_place_list)
+        # printer.multi_printer(A_place_list)
         if len(A_place_list) == 1:
-            print("unique")
+            # print("unique")
             Qplaceid_list.append(place_ID_changer.place_to_id(Q_place))
             Aplaceid_list.append(place_ID_changer.place_to_id(A_place))
             csv_path = os.path.join(os.path.dirname(__file__), "Q_A_placeid_list.csv")
             df = pandas.DataFrame({"Q_id": Qplaceid_list, "A_id": Aplaceid_list})
             df.to_csv(csv_path, index=False)
+            if df.shape[0] == 10000:
+                break
     else:
-        print("no solution, A_place_X")
-        printer.single_printer(Q_place)
+        pass
+        # print("no solution, A_place_X")
+        # printer.single_printer(Q_place)
 
     try_num += 1
