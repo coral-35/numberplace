@@ -1,63 +1,61 @@
 import copy
-import printer
+import numberplace.printer as printer
 
 # クリアチェック
 def clear_check(place):
-    size = len(place)
-    block_size = int(size ** 0.5)
-    for i in range(size):
+    for i in range(9):
         rowset = set(place[i])
-        if len(rowset) != size or 0 in rowset:
+        if len(rowset) != 9 or 0 in rowset:
             return False
-        colset = set([place[j][i] for j in range(size)])
-        if len(colset) != size or 0 in colset:
+        colset = set([place[j][i] for j in range(9)])
+        if len(colset) != 9 or 0 in colset:
             return False
-        blockset = set([place[i//block_size*block_size+j//block_size][i%block_size*block_size+j%block_size] for j in range(size)])
-        if len(blockset) != size or 0 in blockset:
+        blockset = set([place[i//3*3+j//3][i%3*3+j%3] for j in range(9)])
+        if len(blockset) != 9 or 0 in blockset:
             return False
     return True
 
 # 可能性を管理する配列を初期化
 def init_possib_place(place):
-    size = len(place)
-    possib_place = [[[True for _ in range(size)] for _ in range(size)] for _ in range(size)]
-    for i in range(size):
-        for j in range(size):
+    possib_place = [[[True for _ in range(9)] for _ in range(9)] for _ in range(9)]
+    for i in range(9):
+        for j in range(9):
             if place[i][j] != 0:
                 update_possib_place(place, possib_place, i, j)
     return possib_place
 
 # 可能性を更新
 def update_possib_place(place, possib_place, i, j):  
-    size = len(place)
-    block_size = int(size ** 0.5)
     num = place[i][j] - 1
-    for k in range(size):
+    for k in range(9):
         possib_place[i][j][k] = False
         possib_place[i][k][num] = False
         possib_place[k][j][num] = False
-    block_row = i // block_size * block_size
-    block_col = j // block_size * block_size
-    for r in range(block_size):
-        for c in range(block_size):
+    block_row = i // 3 * 3
+    block_col = j // 3 * 3
+    for r in range(3):
+        for c in range(3):
             possib_place[block_row + r][block_col + c][num] = False
     possib_place[i][j][num] = True
 
 
 # 一通りに定まるマスを埋める
 def fill_single_possib_place(place, possib_place):
-    size = len(place)
     filled = True
     while filled:
         filled = False
-        for i in range(size):
-            for j in range(size):
+        for i in range(9):
+            for j in range(9):
                 if place[i][j] == 0:
-                    possible_values = [k for k in range(size) if possib_place[i][j][k]]
+                    possible_values = [k for k in range(9) if possib_place[i][j][k]]
                     if len(possible_values) == 1:
                         place[i][j] = possible_values[0] + 1
                         update_possib_place(place, possib_place, i, j)
                         filled = True
+                    # あるマスで詰みが発覚したらその時点で終了
+                    elif len(possible_values) == 0:
+                        print("詰みました")
+                        return False
 
 # ソルバー
 def solve(place):
@@ -67,7 +65,7 @@ def solve(place):
     if clear_check(place):
         solutions.append(copy.deepcopy(place))
     else:
-        printer.single_printer(place)
+        # printer.single_printer(place)
         return False, place
     return True, solutions
 
@@ -87,3 +85,5 @@ if __name__ == '__main__':
     solve_flg, A_place_list = solve(Q_place)
     if solve_flg:
         printer.multi_printer(A_place_list)
+    else:
+        print("解けませんでした")

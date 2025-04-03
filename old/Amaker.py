@@ -2,8 +2,8 @@ import copy
 import os
 import random
 import pandas
-import printer
-import place_ID_changer
+import numberplace.printer as printer
+import numberplace.place_ID_changer as place_ID_changer
 
 # クリアチェック
 def clear_check(place):

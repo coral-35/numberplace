@@ -1,28 +1,27 @@
-# 4x4ナンプレソルバー
 import copy
-import printer
+import numberplace.printer as printer
 
 # クリアチェック
 def clear_check(place):
-    for i in range(4):
+    for i in range(9):
         rowset = set(place[i])
-        if len(rowset) != 4 or 0 in rowset:
+        if len(rowset) != 9 or 0 in rowset:
             return False
-        colset = set([place[j][i] for j in range(4)])
-        if len(colset) != 4 or 0 in colset:
+        colset = set([place[j][i] for j in range(9)])
+        if len(colset) != 9 or 0 in colset:
             return False
-        blockset = set([place[i//2*2+j//2][i%2*2+j%2] for j in range(4)])
-        if len(blockset) != 4 or 0 in blockset:
+        blockset = set([place[i//3*3+j//3][i%3*3+j%3] for j in range(9)])
+        if len(blockset) != 9 or 0 in blockset:
             return False
     return True
 
 # 途中チェック(枝切り)
 def check(place):
-    for i in range(4):
+    for i in range(9):
         rowset = set()
         colset = set()
         blockset = set()
-        for j in range(4):
+        for j in range(9):
             # 行のチェック
             if place[i][j] != 0:
                 if place[i][j] in rowset:
@@ -34,8 +33,8 @@ def check(place):
                     return False
                 colset.add(place[j][i])
             # ブロックのチェック
-            block_row = i // 2 * 2 + j // 2
-            block_col = i % 2 * 2 + j % 2
+            block_row = i // 3 * 3 + j // 3
+            block_col = i % 3 * 3 + j % 3
             if place[block_row][block_col] != 0:
                 if place[block_row][block_col] in blockset:
                     return False
@@ -44,11 +43,11 @@ def check(place):
 
 # ソルバー
 def solve_recur(place, solutions):
-    for i in range(4):
-        for j in range(4):
+    for i in range(9):
+        for j in range(9):
             # 空いているとき全パターン試す
             if place[i][j] == 0:
-                for k in range(1, 5):
+                for k in range(1, 10):
                     place[i][j] = k
                     if check(place):
                         solve_recur(place, solutions)
@@ -67,10 +66,15 @@ def solve(place):
 
 if __name__ == '__main__':
     Q_place = [
-        [1, 0, 0, 0],
-        [0, 0, 0, 2],
-        [0, 1, 0, 0],
-        [2, 0, 0, 0]
+        [1, 8, 0, 9, 6, 0, 7, 4, 0],
+        [0, 0, 6, 0, 8, 0, 5, 2, 1],
+        [0, 4, 2, 0, 5, 0, 0, 9, 8],
+        [2, 7, 0, 5, 0, 0, 0, 0, 0],
+        [0, 0, 9, 0, 7, 3, 0, 8, 0],
+        [3, 6, 0, 8, 2, 0, 0, 7, 5],
+        [6, 0, 3, 0, 0, 8, 2, 1, 4],
+        [0, 2, 7, 0, 0, 5, 0, 3, 6],
+        [4, 9, 0, 0, 0, 0, 0, 0, 0]
     ]
     A_place_list = solve(Q_place)
     printer.multi_printer(A_place_list)

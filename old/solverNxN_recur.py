@@ -1,6 +1,6 @@
 # NxNナンプレソルバー
 import copy
-import printer
+import numberplace.printer as printer
 
 # クリアチェック
 def clear_check(place):

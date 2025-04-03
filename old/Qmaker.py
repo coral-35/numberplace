@@ -3,8 +3,8 @@ import os
 import pandas
 import random
 import solver9x9
-import printer
-import place_ID_changer
+import numberplace.printer as printer
+import numberplace.place_ID_changer as place_ID_changer
 
 def make_X_place():
     Q_place = [[0 for i in range(9)] for j in range(9)]

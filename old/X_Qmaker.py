@@ -1,7 +1,7 @@
 import copy
 import random
 import numberplace.solver9x9_recur as solver9x9_recur
-import printer
+import numberplace.printer as printer
 
 def make_random_place():
     Q_place = [[0 for _ in range(9)] for _ in range(9)]
